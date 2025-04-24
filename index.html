@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рулетка с Эмоджи</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .slot-machine {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .slot {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f1f1f1;
+            border: 2px solid #000;
+            border-radius: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: none;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            animation: fall 2s infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎰 Рулетка с Эмоджи 🎰</h1>
+    <div class="slot-machine">
+        <div class="slot" id="slot1">🔞</div>
+        <div class="slot" id="slot2">🤓</div>
+        <div class="slot" id="slot3">🥝</div>
+    </div>
+    <button onclick="startRoulette()">Спин 🤓</button>
+
+    <div class="confetti" id="confetti"></div>
+
+    <script>
+        const emojis = ['🔞', '🤓', '🥝', '🍏', '🍆', '🍑', '🥥'];
+        let spinning = false;
+
+        function getRandomEmoji() {
+            return emojis[Math.floor(Math.random() * emojis.length)];
+        }
+
+        function startRoulette() {
+            if (spinning) return;
+            spinning = true;
+
+            const slot1 = document.getElementById('slot1');
+            const slot2 = document.getElementById('slot2');
+            const slot3 = document.getElementById('slot3');
+
+            let counter1 = 0;
+            let counter2 = 0;
+            let counter3 = 0;
+
+            // Крутить только первое эмоджи
+            const interval1 = setInterval(() => {
+                slot1.textContent = getRandomEmoji();
+                counter1++;
+                if (counter1 >= 10) {
+                    clearInterval(interval1);
+                    // Когда первое эмоджи завершило прокрутку, запускаем второе
+                    startSecondSlot();
+                }
+            }, 100);
+
+            // Запуск второго слота после завершения первого
+            function startSecondSlot() {
+                const interval2 = setInterval(() => {
+                    slot2.textContent = getRandomEmoji();
+                    counter2++;
+                    if (counter2 >= 10) {
+                        clearInterval(interval2);
+                        // Когда второе эмоджи завершило прокрутку, запускаем третье
+                        startThirdSlot();
+                    }
+                }, 100);
+            }
+
+            // Запуск третьего слота после завершения второго
+            function startThirdSlot() {
+                const interval3 = setInterval(() => {
+                    slot3.textContent = getRandomEmoji();
+                    counter3++;
+                    if (counter3 >= 10) {
+                        clearInterval(interval3);
+                        // После завершения прокрутки третьего слота
+                        checkResults();
+                    }
+                }, 100);
+            }
+        }
+
+        // Проверка на выигрыш
+        function checkResults() {
+            const slot1 = document.getElementById('slot1');
+            const slot2 = document.getElementById('slot2');
+            const slot3 = document.getElementById('slot3');
+
+            const result = [slot1.textContent, slot2.textContent, slot3.textContent];
+            if (result[0] === result[1] && result[1] === result[2]) {
+                showConfetti();
+                alert('Молодец Мамут Рахал🥳');
+            } else {
+                alert('Лох ебаный ты Мамут Рахал🤣');
+            }
+
+            spinning = false;
+        }
+
+        function showConfetti() {
+            const confetti = document.getElementById('confetti');
+            confetti.style.display = 'block';
+            for (let i = 0; i < 100; i++) {
+                createConfettiPiece(confetti);
+            }
+        }
+
+        function createConfettiPiece(confetti) {
+            const piece = document.createElement('div');
+            piece.classList.add('confetti-piece');
+            piece.style.left = `${Math.random() * 100}%`;
+            piece.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            piece.style.animationDelay = `${Math.random() * 1}s`;
+            confetti.appendChild(piece);
+        }
+    </script>
+
+</body>
+</html>
